@@ -122,7 +122,3 @@ glimpse(sleep_day)
 ```{r}
 head(sleep_day)
 ```
-
-```{r}
-knitr::kable( head(sleep_day))
-```
