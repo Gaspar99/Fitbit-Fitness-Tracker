@@ -1,4 +1,4 @@
-#frecuancia de los id de los usuarios 
+#frequency of user ID
 daily_activity_frequency <- data.frame(daily_activity %>%
                                          group_by(Id) %>%
                                          summarize(min_date = min(ActivityDate),
@@ -17,10 +17,10 @@ sleep_day_frequency <- data.frame(sleep_day %>%
 sleep_day_frequency  <- sleep_day_frequency %>% 
   select(-Var1)
 
-#analisis de la frecuencia de uso: 
+#frequency of usage analysis
 
 #daily_activity_frequency 
-#dias promedio de uso 
+#average usage days
 mean(daily_activity_frequency[ ,4])
 mean(daily_activity_frequency[ ,4])/31
 
@@ -34,7 +34,7 @@ sd(sleep_day_frequency[ ,4])/mean(sleep_day_frequency[ ,4])
 sleep_day_frequency %>% 
   arrange(-Freq)
 
-#uso del dispositivo por minutos
+#device usage in minutes
 daily_activity %>% 
   select(VeryActiveMinutes, 
          ModeratelyActiveMinutes, 
@@ -47,7 +47,7 @@ activity_minutes <- daily_activity %>%
   select(Id, VeryActiveMinutes, ModeratelyActiveMinutes, LightlyActiveMinutes, SedentaryMinutes) %>% 
   mutate(TotalActiveMinutes = VeryActiveMinutes + ModeratelyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes)
 
-#promedio de minutos de uso segun intensidad de la actividad
+#average minutes of usage based on activity intensity
 
 activity_minutes_avg <- data.frame(VeryActiveMinutes = round(mean(activity_minutes$VeryActiveMinutes)),
            ModeratelyActiveMinutes = round(mean(activity_minutes$ModeratelyActiveMinutes)),
@@ -65,13 +65,13 @@ activity_minutes_avg_percent <- round(prop.table(activity_minutes_avg_percent)*1
 
 activity_minutes_avg_percent <- gather( activity_minutes_avg_percent, key = "ActivityIntensity", value = "Average", VeryActiveMinutes:SedentaryMinutes)
 
-#porcentajes de usuario que usaron el dispositivo durante todo el dia
+#percentage of users who used the device throughout the entire day
 count(activity_minutes %>% 
         select(TotalActiveMinutes) %>% 
         filter(TotalActiveMinutes == 1440))
 478/940*100
 
-#coincidencias entre datos de actividad y sueño
+#coincidences between activity and sleep data
 
 coincidences <- merge(sleep_day %>% 
         select(-TotalSleepRecords,
@@ -92,7 +92,7 @@ coincidences <- coincidences %>%
 
 unique(coincidences$Id)
 
-#asociacion entre tiempo de uso y intensidad de la actividad 
+#association between usage time and activity intensity
 
 daily_activity <- daily_activity %>% 
   mutate(TotalActiviteMinutes = 

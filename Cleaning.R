@@ -1,4 +1,4 @@
-#paquetes para limpieza y analisis de los datos
+#Packages for data cleaning and analysis.
 install.packages("tidyverse")
 install.packages("skimr")
 install.packages("janitor")
@@ -10,27 +10,27 @@ library(janitor)
 library(here)
 library(chron)
 
-#base de datos daily_activity:
-#seleccion de las variables de interes
+#daily_activity database:
+#selection of variables of interest
 daily_activity <- dailyActivity_merged %>%
   select(-TrackerDistance, -LoggedActivitiesDistance)
 daily_activity <- daily_activity %>% 
   select(-Calories)
 daily_activity <- daily_activity %>% 
   rename(ModeratelyActiveMinutes = FairlyActiveMinutes)
-#resumen de los datos
+#data summary
 str(daily_activity)
 
-#cambio de tipo de dato de ActivityDate a fecha
+#changing data type of ActivityDate to date
 daily_activity <- daily_activity %>% 
   mutate(ActivityDate = as.Date(ActivityDate, format = "%m/%d/%Y" ))
 
-#busqueda y eliminacion de datos fuera del rango de fechas
+#search and removal of data outside the date range
 daily_activity %>% 
   filter(!between(ActivityDate, as.Date("2016-03-12"), as.Date("2016-05-12")))
 #no hay fechas fuera del rango 
 
-#suma de minutos mayores a los de un dia (1440)
+#sum of minutes greater than those in a day(1440)
 view(
 daily_activity %>% 
   filter(VeryActiveMinutes > 1440 |
@@ -43,19 +43,19 @@ apply(daily_activity[ ,9],2,max)
 apply(daily_activity[ ,9],2,max)
 apply(daily_activity[ ,9],2,max)
 
-#base de datos sleep_day
-#separacion de la fecha y la hora
+#sleep_day database
+#separation of date and time
 sleep_day <- sleep_day %>% 
   separate(SleepDay, into = c("date", "hour"), " ")
 
-#cambio de tipo de dato a fecha y hora
+#changing data type to date and time
 sleep_day <- sleep_day %>% 
   mutate(date = as.Date(date ,format = "%m/%d/%Y"))
 
 sleep_day <- sleep_day %>% 
   mutate(hour = times(hour))
 
-#al ser todos los datos de la misma hora la columna hour no nos brinda informacion importante
+#since all the data is from the same hour, the "hour" column does not provide us with meaningful information
 sleep_day %>% 
   select(hour) %>% 
   filter(hour != "12:00:00")

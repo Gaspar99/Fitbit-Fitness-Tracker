@@ -1,6 +1,6 @@
 library(scales)
 ls(activity_minutes_avg)
-#grafico de minutos de uso 
+#usage minutes graph
 ggplot(activity_minutes_avg, 
        mapping = aes(x = 2,
                      y = Average,
@@ -13,7 +13,7 @@ ggplot(activity_minutes_avg,
   theme_void()+
   labs(title = "Average minutes per activit")+
   xlim(0.5,2.5)
-#grafico de minutos de uso en porcentaje
+#usage minutes percentage graph
 ggplot(activity_minutes_avg_percent, 
        mapping = aes(x = 2,
                      y = Average,
@@ -27,7 +27,7 @@ ggplot(activity_minutes_avg_percent,
   labs(title = "Percentage of average minutes per activity")+
   xlim(0.5,2.5)
 
-#asociacion entre distancia de cada intensidad y minutos de uso
+#association between distance of each intensity and usage minutes
 ls(daily_activity)
 
 ggplot(daily_activity)+
@@ -46,7 +46,7 @@ ggplot(daily_activity)+
   geom_point(mapping = aes(x = TotalActiviteMinutes, y = SedentaryActiveDistance )) + 
   geom_smooth(method = "lm", se = FALSE, mapping = aes(x = TotalActiviteMinutes, y = SedentaryActiveDistance ))
 
-#asociacion entre minutos de cada intensidad y distancia total
+#association between minutes of each intensity and total distance
 ls(daily_activity)
 
 ggplot(daily_activity)+

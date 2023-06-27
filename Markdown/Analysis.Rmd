@@ -1,0 +1,177 @@
+---
+title: "Analysis"
+output: html_document
+date: "2023-06-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(skimr)
+library(janitor)
+library(here)
+library(chron)
+```
+
+```{r}
+daily_activity <- read.csv("G:/Otros ordenadores/Mi Portátil/Gaspar Facultad/Analisis de datos/Caso practico/R/Boards/daily_activity_csv.csv")
+```
+
+```{r}
+sleep_day <- read.csv("G:/Otros ordenadores/Mi Portátil/Gaspar Facultad/Analisis de datos/Caso practico/R/Boards/sleep_day_csv.csv")
+```
+
+# Analysis
+
+## Frequency of use
+
+The first step was to create a frequency table of device usage. This table considers the days on which each ID recorded information.
+
+```{r}
+sleep_day_frequency <- read.csv("G:/Otros ordenadores/Mi Portátil/Gaspar Facultad/Analisis de datos/Caso practico/R/Boards/daily_activity_frequency_csv.csv")
+```
+
+```{r}
+daily_activity_frequency <- data.frame(daily_activity %>%
+                                         group_by(Id) %>%
+                                         summarize(min_date = min(ActivityDate),
+                                                   max_date = max(ActivityDate)),
+                                       table(daily_activity$Id))
+```
+
+```{r}
+daily_activity_frequency <- daily_activity_frequency %>%
+  select(-Var1)
+```
+
+```{r}
+daily_activity_frequency
+```
+
+## Frequency of use during sleep
+
+We proceeded to create an identical table, incorporating the information we have about users' sleep.
+
+```{r}
+sleep_day_frequency <- read.csv("G:/Otros ordenadores/Mi Portátil/Gaspar Facultad/Analisis de datos/Caso practico/R/Boards/sleep_day_frequency_csv.csv")
+```
+
+```{r}
+str(sleep_day_frequency)
+```
+### Avg. days of use
+
+```{r}
+mean(daily_activity_frequency[ ,4])
+```
+
+```{r}
+mean(daily_activity_frequency[ ,4])/31
+```
+
+On average, users use the device on 92% of the days during the study period, which is equivalent to 28 out of 31 days.
+
+### Avg. days of device usage during sleep
+
+```{r}
+mean(sleep_day_frequency[ ,4])
+```
+
+```{r}
+mean(sleep_day_frequency[ ,4])/31
+```
+
+On average, the device is used during sleep for only 17 out of 31 days, which is approximately 55%.
+
+## Usage of the device by minutes of activity
+
+Create a data frame that contains only the columns of ID, the different activity times according to their intensity, and a last column with the total sum of minutes of device usage.
+
+```{r}
+activity_minutes <- read.csv("G:/Otros ordenadores/Mi Portátil/Gaspar Facultad/Analisis de datos/Caso practico/R/Boards/activity_minutes_csv.csv")
+
+```
+
+```{r}
+head(activity_minutes)
+```
+
+Averages of device usage in minutes are calculated based on the intensity of the activity.
+
+```{r}
+activity_minutes_avg <- data.frame(VeryActiveMinutes = round(mean(activity_minutes$VeryActiveMinutes)),
+           ModeratelyActiveMinutes = round(mean(activity_minutes$ModeratelyActiveMinutes)),
+           LightlyActiveMinutes = round(mean(activity_minutes$LightlyActiveMinutes)),
+           SedentaryMinutes = round(mean(activity_minutes$SedentaryMinutes))
+           )
+```
+
+```{r}
+activity_minutes_avg
+```
+
+```{r}
+activity_minutes_avg_percent <- read.csv("G:/Otros ordenadores/Mi Portátil/Gaspar Facultad/Analisis de datos/Caso practico/R/Boards/activity_minutes_avg_percent_csv.csv")
+```
+
+```{r}
+activity_minutes_avg_percent
+```
+
+## Coincidencias
+
+### Activity Data and Sleep Data
+
+To analyze the activity data in conjunction with the sleep data, a new data frame is created. It contains the activity data only for users who also recorded sleep activity.
+
+Merge the columns of interest from each data frame.
+
+```{r}
+coincidences <- merge(sleep_day ,
+      daily_activity %>% 
+        select(-VeryActiveDistance,
+               -ModeratelyActiveDistance,
+               -LightActiveDistance,
+               -SedentaryActiveDistance),
+      by.x = c("Id", "ActivityDate"), by.y = c("Id","ActivityDate"))
+```
+
+An additional column is added to the data frame with the total sum of activity minutes.
+
+```{r}
+coincidences <- read.csv("G:/Otros ordenadores/Mi Portátil/Gaspar Facultad/Analisis de datos/Caso practico/R/Boards/coincidence_csv.csv")
+```
+
+```{r}
+coincidences <- coincidences %>% 
+  mutate(TotalActiveMinutes = 
+           VeryActiveMinutes + 
+           ModeratelyActiveMinutes +
+           LightlyActiveMinutes +
+           SedentaryMinutes)
+```
+
+```{r}
+head(coincidences)
+```
+
+Finally, a correlation coefficient table is created to understand the relationship that exists between the variables.
+
+```{r}
+correlation <- read.csv("G:/Otros ordenadores/Mi Portátil/Gaspar Facultad/Analisis de datos/Caso practico/R/Boards/correlation_csv.csv")
+```
+
+```{r}
+correlation <- mutate_all(correlation, as.numeric)
+```
+
+```{r}
+correlation <- cor(correlation)
+```
+
+```{r}
+(correlation)
+```
